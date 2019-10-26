@@ -22,9 +22,15 @@ height = probed["streams"][0]["height"]
 # https://engineering.giphy.com/how-to-make-gifs-with-ffmpeg/
 #   -filter_complex "[0:v] fps=12,scale=360:-1,split [a][b];[a] palettegen [p];[b][p] paletteuse
 input = ffmpeg.input(filepath)
-input.video.filter_("fps", 12).filter_("scale", w=width, h=-1).output(
-    output_filepath
-).run(overwrite_output=True)
+split = (
+    input.video.filter_("fps", 12)
+    .filter_("scale", w=width, h=-1)
+    .filter_multi_output("split")
+)
+palette = ffmpeg.filter(split.stream(0), "palettegen")
+(ffmpeg.filter([split.stream(1), palette], "paletteuse")).output(output_filepath).run(
+    overwrite_output=True
+)
 
 # print(
 #     ffmpeg.get_args(
