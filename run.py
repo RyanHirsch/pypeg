@@ -31,9 +31,3 @@ palette = ffmpeg.filter(split.stream(0), "palettegen")
 (ffmpeg.filter([split.stream(1), palette], "paletteuse")).output(output_filepath).run(
     overwrite_output=True
 )
-
-# print(
-#     ffmpeg.get_args(
-#         "[0:v] fps=12,scale=360:-1,split [a][b];[a] palettegen [p];[b][p] paletteuse"
-#     )
-# )
